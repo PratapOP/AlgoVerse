@@ -1,11 +1,17 @@
+import { Routes, Route, Navigate } from "react-router-dom";
 import Visualizer from "./pages/Visualizer";
+import AlgorithmDetail from "./pages/AlgorithmDetail";
 
 function App() {
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>AlgoVerse</h1>
-      <Visualizer />
-    </div>
+    <Routes>
+      <Route path="/" element={<Navigate to="/visualize" />} />
+      <Route path="/visualize" element={<Visualizer />} />
+      <Route
+        path="/algorithm/:algoKey"
+        element={<AlgorithmDetail />}
+      />
+    </Routes>
   );
 }
 

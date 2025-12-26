@@ -4,6 +4,11 @@ import ControlPanel from "../components/controls/ControlPanel";
 import { getBubbleSortSteps } from "../algorithms/sorting/bubbleSort";
 import { getSelectionSortSteps } from "../algorithms/sorting/selectionSort";
 import { getInsertionSortSteps } from "../algorithms/sorting/insertionSort";
+import { getMergeSortSteps } from "../algorithms/sorting/mergeSort";
+import { getQuickSortSteps } from "../algorithms/sorting/quickSort";
+import { getHeapSortSteps } from "../algorithms/sorting/heapSort";
+import { useNavigate } from "react-router-dom";
+
 
 function Visualizer() {
   /* ---------- Utility ---------- */
@@ -11,6 +16,7 @@ function Visualizer() {
     Array.from({ length: size }, () =>
       Math.floor(Math.random() * 100) + 10
     );
+  const navigate = useNavigate();
 
   const getSteps = (arr, algo) => {
   switch (algo) {
@@ -18,6 +24,12 @@ function Visualizer() {
       return getSelectionSortSteps(arr);
     case "insertion":
       return getInsertionSortSteps(arr);
+    case "merge":
+      return getMergeSortSteps(arr);
+    case "quick":
+      return getQuickSortSteps(arr);
+    case "heap":
+      return getHeapSortSteps(arr);
     case "bubble":
     default:
       return getBubbleSortSteps(arr);
@@ -108,8 +120,16 @@ function Visualizer() {
         <option value="bubble">Bubble Sort</option>
         <option value="selection">Selection Sort</option>
         <option value="insertion">Insertion Sort</option>
+        <option value="merge">Merge Sort</option>
+        <option value="quick">Quick Sort</option>
+        <option value="heap">Heap Sort</option>
       </select>
-
+      <button
+        style={{ marginBottom: "1rem" }}
+          onClick={() => navigate(`/algorithm/${algorithm}`)}
+        >
+          View {algorithm.charAt(0).toUpperCase() + algorithm.slice(1)} Sort Theory
+      </button>
       <ArrayBars
         array={array}
         activeIndices={active}

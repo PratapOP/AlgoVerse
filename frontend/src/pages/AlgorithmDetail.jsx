@@ -1,6 +1,8 @@
+import { useParams } from "react-router-dom";
 import { algorithms } from "../data/algorithms";
 
-function AlgorithmDetail({ algoKey }) {
+function AlgorithmDetail() {
+  const { algoKey } = useParams();
   const algo = algorithms[algoKey];
 
   if (!algo) return <p>Algorithm not found</p>;
