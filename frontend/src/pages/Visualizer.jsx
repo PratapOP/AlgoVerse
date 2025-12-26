@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import ArrayBars from "../components/visualizers/sorting/ArrayBars";
 import ControlPanel from "../components/controls/ControlPanel";
 import { getBubbleSortSteps } from "../algorithms/sorting/bubbleSort";
+import { getSelectionSortSteps } from "../algorithms/sorting/selectionSort";
 
 function Visualizer() {
   /* ---------- Utility ---------- */
@@ -10,7 +11,18 @@ function Visualizer() {
       Math.floor(Math.random() * 100) + 10
     );
 
+  const getSteps = (arr, algo) => {
+    switch (algo) {
+      case "selection":
+        return getSelectionSortSteps(arr);
+      case "bubble":
+      default:
+        return getBubbleSortSteps(arr);
+    }
+  };
+
   /* ---------- State ---------- */
+  const [algorithm, setAlgorithm] = useState("bubble");
   const [size, setSize] = useState(20);
   const [array, setArray] = useState(() => generateArray(20));
   const [steps, setSteps] = useState([]);
@@ -21,16 +33,16 @@ function Visualizer() {
 
   const timerRef = useRef(null);
 
-  /* ---------- Re-generate array when size changes ---------- */
+  /* ---------- Re-generate array on size / algorithm change ---------- */
   useEffect(() => {
     pause();
     const newArray = generateArray(size);
     setArray(newArray);
-    setSteps(getBubbleSortSteps(newArray));
+    setSteps(getSteps(newArray, algorithm));
     setStepIndex(0);
     setActive([]);
     setSorted([]);
-  }, [size]);
+  }, [size, algorithm]);
 
   /* ---------- Controls ---------- */
   const play = () => {
@@ -69,7 +81,7 @@ function Visualizer() {
     pause();
     const newArray = generateArray(size);
     setArray(newArray);
-    setSteps(getBubbleSortSteps(newArray));
+    setSteps(getSteps(newArray, algorithm));
     setStepIndex(0);
     setActive([]);
     setSorted([]);
@@ -79,8 +91,19 @@ function Visualizer() {
   return (
     <div>
       <h2 style={{ marginBottom: "1rem" }}>
-        Bubble Sort Visualization
+        {algorithm === "bubble"
+          ? "Bubble Sort Visualization"
+          : "Selection Sort Visualization"}
       </h2>
+
+      <select
+        value={algorithm}
+        onChange={(e) => setAlgorithm(e.target.value)}
+        style={{ marginBottom: "1rem" }}
+      >
+        <option value="bubble">Bubble Sort</option>
+        <option value="selection">Selection Sort</option>
+      </select>
 
       <ArrayBars
         array={array}
