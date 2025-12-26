@@ -1,0 +1,19 @@
+:root {
+  --bg-primary: #0f172a;        /* Dark navy */
+  --bg-secondary: #020617;      /* Almost black */
+  --panel-bg: #111827;
+
+  --text-primary: #e5e7eb;
+  --text-secondary: #9ca3af;
+
+  --accent-blue: #38bdf8;
+  --accent-green: #22c55e;
+  --accent-yellow: #facc15;
+  --accent-red: #ef4444;
+  --accent-purple: #a855f7;
+
+  --bar-default: #38bdf8;
+  --bar-active: #facc15;
+  --bar-sorted: #22c55e;
+  --bar-found: #ef4444;
+}

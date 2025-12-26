@@ -1,26 +1,39 @@
 import { useParams } from "react-router-dom";
-import { algorithms } from "../data/algorithms";
 import { sortingAlgorithms } from "../data/sortingAlgorithms";
+import { searchingAlgorithms } from "../data/searchingAlgorithms";
 
 function AlgorithmDetail() {
   const { algoKey } = useParams();
-  const algo = sortingAlgorithms[algoKey];
 
-  if (!algo) return <p>Algorithm not found</p>;
+  // Lookup in sorting first, then searching
+  const algo =
+    sortingAlgorithms[algoKey] || searchingAlgorithms[algoKey];
+
+  if (!algo) {
+    return (
+      <div style={{ padding: "2rem" }}>
+        <h2>Algorithm not found</h2>
+        <p>
+          The algorithm you are looking for does not exist or has not been
+          implemented yet.
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <div style={{ padding: "2rem" }}>
+    <div style={{ padding: "2rem", maxWidth: "900px", margin: "0 auto" }}>
       <h1>{algo.name}</h1>
 
       <h3>Overview</h3>
       <p>{algo.overview}</p>
 
-      <h3>Complexity</h3>
+      <h3>Time & Space Complexity</h3>
       <ul>
-        <li>Best: {algo.complexity.best}</li>
-        <li>Average: {algo.complexity.average}</li>
-        <li>Worst: {algo.complexity.worst}</li>
-        <li>Space: {algo.complexity.space}</li>
+        <li>Best Case: {algo.complexity.best}</li>
+        <li>Average Case: {algo.complexity.average}</li>
+        <li>Worst Case: {algo.complexity.worst}</li>
+        <li>Space Complexity: {algo.complexity.space}</li>
       </ul>
 
       <h3>History</h3>
@@ -29,13 +42,13 @@ function AlgorithmDetail() {
       <h3>Pseudocode</h3>
       <pre>{algo.pseudocode}</pre>
 
-      <h3>JavaScript Code</h3>
+      <h3>JavaScript Implementation</h3>
       <pre>{algo.code.js}</pre>
 
-      <h3>Python Code</h3>
+      <h3>Python Implementation</h3>
       <pre>{algo.code.python}</pre>
 
-      <h3>Real-world Usage</h3>
+      <h3>Real-World Usage</h3>
       <p>{algo.usage}</p>
     </div>
   );

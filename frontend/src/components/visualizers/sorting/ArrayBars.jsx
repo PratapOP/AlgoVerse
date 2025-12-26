@@ -1,39 +1,79 @@
-function ArrayBars({ array, activeIndices, sortedIndices = [] }) {
+function ArrayBars({
+  array,
+  activeIndices = [],
+  sortedIndices = [],
+  range = null,
+}) {
   const maxVal = Math.max(...array);
 
   return (
     <div
       style={{
+        position: "relative",
         display: "flex",
         alignItems: "flex-end",
-        height: "320px",
         gap: "6px",
-        marginTop: "2rem",
+        height: "320px",
         padding: "1rem",
-        background: "var(--bg-secondary)",
-        borderRadius: "8px",
+        background: "rgba(0,0,0,0.25)",
+        borderRadius: "12px",
+        marginBottom: "1rem",
       }}
     >
-      {array.map((value, idx) => {
-        const height = (value / maxVal) * 100;
+      {/* Comparison Arrow */}
+      {activeIndices.length === 2 && (
+        <div
+          style={{
+            position: "absolute",
+            bottom: "340px",
+            left: `${activeIndices[0] * 24}px`,
+            width: `${(activeIndices[1] - activeIndices[0]) * 24}px`,
+            height: "2px",
+            background: "var(--accent-yellow)",
+            transition: "all 0.3s ease",
+          }}
+        />
+      )}
 
-        let color = "#4caf50";
-        if (activeIndices.includes(idx)) color = "var(--accent)";
-        if (sortedIndices.includes(idx)) color = "#1db954";
+      {array.map((value, index) => {
+        let bg = "var(--bar-default)";
+
+        if (sortedIndices.includes(index)) {
+          bg = "var(--bar-sorted)";
+        } else if (activeIndices.includes(index)) {
+          bg = "var(--bar-active)";
+        } else if (range && index >= range[0] && index <= range[1]) {
+          bg = "var(--accent-purple)";
+        }
 
         return (
           <div
-            key={idx}
-            title={value}
+            key={index}
             style={{
               width: "18px",
-              height: `${height}%`,
-              backgroundColor: color,
+              height: `${(value / maxVal) * 100}%`,
+              background: bg,
               borderRadius: "4px 4px 0 0",
               transition:
-                "height 0.25s ease, background-color 0.25s ease",
+                "height 0.3s ease, background 0.3s ease, transform 0.3s ease",
+              transform: activeIndices.includes(index)
+                ? "translateY(-6px) scale(1.05)"
+                : "none",
+              position: "relative",
             }}
-          />
+          >
+            {/* Value Label */}
+            <span
+              style={{
+                position: "absolute",
+                top: "-18px",
+                fontSize: "10px",
+                color: "#9ca3af",
+              }}
+            >
+              {value}
+            </span>
+          </div>
         );
       })}
     </div>

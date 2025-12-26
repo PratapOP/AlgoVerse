@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import ArrayBars from "../components/visualizers/sorting/ArrayBars";
 import ControlPanel from "../components/controls/ControlPanel";
+
+// Sorting algorithms
 import { getBubbleSortSteps } from "../algorithms/sorting/bubbleSort";
 import { getSelectionSortSteps } from "../algorithms/sorting/selectionSort";
 import { getInsertionSortSteps } from "../algorithms/sorting/insertionSort";
@@ -12,49 +16,56 @@ import { getCountingSortSteps } from "../algorithms/sorting/countingSort";
 import { getRadixSortSteps } from "../algorithms/sorting/radixSort";
 import { getBucketSortSteps } from "../algorithms/sorting/bucketSort";
 
-import { useNavigate } from "react-router-dom";
-
+// Searching algorithms
+import { getLinearSearchSteps } from "../algorithms/searching/linearSearch";
+import { getBinarySearchSteps } from "../algorithms/searching/binarySearch";
+import { getJumpSearchSteps } from "../algorithms/searching/jumpSearch";
+import { getExponentialSearchSteps } from "../algorithms/searching/exponentialSearch";
 
 function Visualizer() {
-  /* ---------- Utility ---------- */
+  /* ---------- Utilities ---------- */
   const generateArray = (size) =>
     Array.from({ length: size }, () =>
       Math.floor(Math.random() * 100) + 10
     );
+
   const navigate = useNavigate();
+  const timerRef = useRef(null);
 
   const getSteps = (arr, algo) => {
-  switch (algo) {
-    case "selection":
-      return getSelectionSortSteps(arr);
-    case "insertion":
-      return getInsertionSortSteps(arr);
-    case "merge":
-      return getMergeSortSteps(arr);
-    case "quick":
-      return getQuickSortSteps(arr);
-    case "heap":
-      return getHeapSortSteps(arr);
-    case "shell":
-      return getShellSortSteps(arr);
-    case "counting":
-      return getCountingSortSteps(arr);
-    case "radix":
-      return getRadixSortSteps(arr);
-    case "bucket":
-      return getBucketSortSteps(arr);
+    switch (algo) {
+      case "selection":
+        return getSelectionSortSteps(arr);
+      case "insertion":
+        return getInsertionSortSteps(arr);
+      case "merge":
+        return getMergeSortSteps(arr);
+      case "quick":
+        return getQuickSortSteps(arr);
+      case "heap":
+        return getHeapSortSteps(arr);
+      case "shell":
+        return getShellSortSteps(arr);
+      case "counting":
+        return getCountingSortSteps(arr);
+      case "radix":
+        return getRadixSortSteps(arr);
+      case "bucket":
+        return getBucketSortSteps(arr);
 
-    case "linear":
-      return getLinearSearchSteps(arr, target);
-    case "binary":
-      return getBinarySearchSteps(arr, target);
+      case "linear":
+        return getLinearSearchSteps(arr, target);
+      case "binary":
+        return getBinarySearchSteps(arr, target);
+      case "jump":
+        return getJumpSearchSteps(arr, target);
+      case "exponential":
+        return getExponentialSearchSteps(arr, target);
 
-    case "bubble":
-    default:
-      return getBubbleSortSteps(arr);
-  }
-};
-
+      default:
+        return getBubbleSortSteps(arr);
+    }
+  };
 
   /* ---------- State ---------- */
   const [algorithm, setAlgorithm] = useState("bubble");
@@ -64,12 +75,19 @@ function Visualizer() {
   const [stepIndex, setStepIndex] = useState(0);
   const [active, setActive] = useState([]);
   const [sorted, setSorted] = useState([]);
+  const [range, setRange] = useState(null);
   const [speed, setSpeed] = useState(300);
   const [target, setTarget] = useState(50);
+  const [stepText, setStepText] = useState("");
 
-  const timerRef = useRef(null);
+  const isSearching = [
+    "linear",
+    "binary",
+    "jump",
+    "exponential",
+  ].includes(algorithm);
 
-  /* ---------- Re-generate array on size / algorithm change ---------- */
+  /* ---------- Re-generate on size / algorithm change ---------- */
   useEffect(() => {
     pause();
     const newArray = generateArray(size);
@@ -78,6 +96,8 @@ function Visualizer() {
     setStepIndex(0);
     setActive([]);
     setSorted([]);
+    setRange(null);
+    setStepText("");
   }, [size, algorithm]);
 
   /* ---------- Controls ---------- */
@@ -92,13 +112,34 @@ function Visualizer() {
         }
 
         const step = steps[prev];
-        setArray(step.array);
-        setActive(step.indices);
 
-        if (step.type === "done") {
-          setSorted(
-            Array.from({ length: step.array.length }, (_, i) => i)
+        if (step.array) setArray(step.array);
+        setActive(step.indices || []);
+        setRange(step.range || null);
+
+        /* ----- EDUCATIONAL STEP EXPLANATION ----- */
+        if (step.type === "compare" && step.indices?.length === 2) {
+          const [i, j] = step.indices;
+          setStepText(
+            `Comparing index ${i} (${array[i]}) with index ${j} (${array[j]})`
           );
+        } else if (step.type === "swap" && step.indices?.length === 2) {
+          const [i, j] = step.indices;
+          setStepText(
+            `Swapping ${array[i]} and ${array[j]} because they are out of order`
+          );
+        } else if (step.type === "found") {
+          setStepText(`Target ${target} found`);
+        } else if (step.type === "not-found") {
+          setStepText(`Target ${target} not found`);
+        } else if (step.type === "done") {
+          setStepText("Algorithm completed");
+
+          if (!isSearching && step.array) {
+            setSorted(
+              Array.from({ length: step.array.length }, (_, i) => i)
+            );
+          }
         }
 
         return prev + 1;
@@ -121,21 +162,25 @@ function Visualizer() {
     setStepIndex(0);
     setActive([]);
     setSorted([]);
+    setRange(null);
+    setStepText("");
   };
 
   /* ---------- Render ---------- */
   return (
-    <div>
-      <h2 style={{ marginBottom: "1rem" }}>
-        {algorithm === "bubble"
-          ? "Bubble Sort Visualization"
-          : "Selection Sort Visualization"}
+    <div style={{ padding: "1rem" }}>
+      <h2>
+        {algorithm.charAt(0).toUpperCase() + algorithm.slice(1)}{" "}
+        {isSearching ? "Search" : "Visualization"}
       </h2>
+
+      <p style={{ color: "var(--text-secondary)", marginBottom: "1rem" }}>
+        {stepText}
+      </p>
 
       <select
         value={algorithm}
         onChange={(e) => setAlgorithm(e.target.value)}
-        style={{ marginBottom: "1rem" }}
       >
         <option value="bubble">Bubble Sort</option>
         <option value="selection">Selection Sort</option>
@@ -150,27 +195,32 @@ function Visualizer() {
 
         <option value="linear">Linear Search</option>
         <option value="binary">Binary Search</option>
-
-
+        <option value="jump">Jump Search</option>
+        <option value="exponential">Exponential Search</option>
       </select>
-      <input
-        type="number"
-        value={target}
-        onChange={(e) => setTarget(Number(e.target.value))}
-        placeholder="Target"
-        style={{ marginRight: "1rem" }}
-      />
+
+      {isSearching && (
+        <input
+          type="number"
+          value={target}
+          onChange={(e) => setTarget(Number(e.target.value))}
+          placeholder="Target"
+          style={{ marginLeft: "1rem" }}
+        />
+      )}
 
       <button
-        style={{ marginBottom: "1rem" }}
-          onClick={() => navigate(`/algorithm/${algorithm}`)}
-        >
-          View {algorithm.charAt(0).toUpperCase() + algorithm.slice(1)} Sort Theory
+        style={{ display: "block", margin: "1rem 0" }}
+        onClick={() => navigate(`/algorithm/${algorithm}`)}
+      >
+        View Theory
       </button>
+
       <ArrayBars
         array={array}
         activeIndices={active}
         sortedIndices={sorted}
+        range={range}
       />
 
       <ControlPanel
