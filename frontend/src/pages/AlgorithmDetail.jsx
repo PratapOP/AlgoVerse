@@ -1,42 +1,39 @@
-function AlgorithmDetail({ algorithm }) {
+import { algorithms } from "../data/algorithms";
+
+function AlgorithmDetail({ algoKey }) {
+  const algo = algorithms[algoKey];
+
+  if (!algo) return <p>Algorithm not found</p>;
+
   return (
-    <div style={{ marginTop: "2rem" }}>
-      <h1>{algorithm.name}</h1>
+    <div style={{ padding: "2rem" }}>
+      <h1>{algo.name}</h1>
 
-      <section>
-        <h3>Overview</h3>
-        <p>{algorithm.description}</p>
-      </section>
+      <h3>Overview</h3>
+      <p>{algo.overview}</p>
 
-      <section>
-        <h3>Time & Space Complexity</h3>
-        <ul>
-          <li>Best: {algorithm.complexity.best}</li>
-          <li>Average: {algorithm.complexity.average}</li>
-          <li>Worst: {algorithm.complexity.worst}</li>
-          <li>Space: {algorithm.complexity.space}</li>
-        </ul>
-      </section>
+      <h3>Complexity</h3>
+      <ul>
+        <li>Best: {algo.complexity.best}</li>
+        <li>Average: {algo.complexity.average}</li>
+        <li>Worst: {algo.complexity.worst}</li>
+        <li>Space: {algo.complexity.space}</li>
+      </ul>
 
-      <section>
-        <h3>History</h3>
-        <p>{algorithm.history}</p>
-      </section>
+      <h3>History</h3>
+      <p>{algo.history}</p>
 
-      <section>
-        <h3>Pseudocode</h3>
-        <pre>{algorithm.pseudocode}</pre>
-      </section>
+      <h3>Pseudocode</h3>
+      <pre>{algo.pseudocode}</pre>
 
-      <section>
-        <h3>Code (JavaScript)</h3>
-        <pre>{algorithm.code.js}</pre>
-      </section>
+      <h3>JavaScript Code</h3>
+      <pre>{algo.code.js}</pre>
 
-      <section>
-        <h3>Code (Python)</h3>
-        <pre>{algorithm.code.python}</pre>
-      </section>
+      <h3>Python Code</h3>
+      <pre>{algo.code.python}</pre>
+
+      <h3>Real-world Usage</h3>
+      <p>{algo.usage}</p>
     </div>
   );
 }

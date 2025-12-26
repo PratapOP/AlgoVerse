@@ -3,6 +3,7 @@ import ArrayBars from "../components/visualizers/sorting/ArrayBars";
 import ControlPanel from "../components/controls/ControlPanel";
 import { getBubbleSortSteps } from "../algorithms/sorting/bubbleSort";
 import { getSelectionSortSteps } from "../algorithms/sorting/selectionSort";
+import { getInsertionSortSteps } from "../algorithms/sorting/insertionSort";
 
 function Visualizer() {
   /* ---------- Utility ---------- */
@@ -12,14 +13,17 @@ function Visualizer() {
     );
 
   const getSteps = (arr, algo) => {
-    switch (algo) {
-      case "selection":
-        return getSelectionSortSteps(arr);
-      case "bubble":
-      default:
-        return getBubbleSortSteps(arr);
-    }
-  };
+  switch (algo) {
+    case "selection":
+      return getSelectionSortSteps(arr);
+    case "insertion":
+      return getInsertionSortSteps(arr);
+    case "bubble":
+    default:
+      return getBubbleSortSteps(arr);
+  }
+};
+
 
   /* ---------- State ---------- */
   const [algorithm, setAlgorithm] = useState("bubble");
@@ -103,6 +107,7 @@ function Visualizer() {
       >
         <option value="bubble">Bubble Sort</option>
         <option value="selection">Selection Sort</option>
+        <option value="insertion">Insertion Sort</option>
       </select>
 
       <ArrayBars
