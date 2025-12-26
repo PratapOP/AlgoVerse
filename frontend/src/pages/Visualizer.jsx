@@ -44,6 +44,11 @@ function Visualizer() {
     case "bucket":
       return getBucketSortSteps(arr);
 
+    case "linear":
+      return getLinearSearchSteps(arr, target);
+    case "binary":
+      return getBinarySearchSteps(arr, target);
+
     case "bubble":
     default:
       return getBubbleSortSteps(arr);
@@ -60,6 +65,7 @@ function Visualizer() {
   const [active, setActive] = useState([]);
   const [sorted, setSorted] = useState([]);
   const [speed, setSpeed] = useState(300);
+  const [target, setTarget] = useState(50);
 
   const timerRef = useRef(null);
 
@@ -142,7 +148,19 @@ function Visualizer() {
         <option value="radix">Radix Sort</option>
         <option value="bucket">Bucket Sort</option>
 
+        <option value="linear">Linear Search</option>
+        <option value="binary">Binary Search</option>
+
+
       </select>
+      <input
+        type="number"
+        value={target}
+        onChange={(e) => setTarget(Number(e.target.value))}
+        placeholder="Target"
+        style={{ marginRight: "1rem" }}
+      />
+
       <button
         style={{ marginBottom: "1rem" }}
           onClick={() => navigate(`/algorithm/${algorithm}`)}
