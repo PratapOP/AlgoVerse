@@ -7,6 +7,11 @@ import { getInsertionSortSteps } from "../algorithms/sorting/insertionSort";
 import { getMergeSortSteps } from "../algorithms/sorting/mergeSort";
 import { getQuickSortSteps } from "../algorithms/sorting/quickSort";
 import { getHeapSortSteps } from "../algorithms/sorting/heapSort";
+import { getShellSortSteps } from "../algorithms/sorting/shellSort";
+import { getCountingSortSteps } from "../algorithms/sorting/countingSort";
+import { getRadixSortSteps } from "../algorithms/sorting/radixSort";
+import { getBucketSortSteps } from "../algorithms/sorting/bucketSort";
+
 import { useNavigate } from "react-router-dom";
 
 
@@ -30,6 +35,15 @@ function Visualizer() {
       return getQuickSortSteps(arr);
     case "heap":
       return getHeapSortSteps(arr);
+    case "shell":
+      return getShellSortSteps(arr);
+    case "counting":
+      return getCountingSortSteps(arr);
+    case "radix":
+      return getRadixSortSteps(arr);
+    case "bucket":
+      return getBucketSortSteps(arr);
+
     case "bubble":
     default:
       return getBubbleSortSteps(arr);
@@ -123,6 +137,11 @@ function Visualizer() {
         <option value="merge">Merge Sort</option>
         <option value="quick">Quick Sort</option>
         <option value="heap">Heap Sort</option>
+        <option value="shell">Shell Sort</option>
+        <option value="counting">Counting Sort</option>
+        <option value="radix">Radix Sort</option>
+        <option value="bucket">Bucket Sort</option>
+
       </select>
       <button
         style={{ marginBottom: "1rem" }}

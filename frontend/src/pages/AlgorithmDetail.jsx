@@ -1,9 +1,10 @@
 import { useParams } from "react-router-dom";
 import { algorithms } from "../data/algorithms";
+import { sortingAlgorithms } from "../data/sortingAlgorithms";
 
 function AlgorithmDetail() {
   const { algoKey } = useParams();
-  const algo = algorithms[algoKey];
+  const algo = sortingAlgorithms[algoKey];
 
   if (!algo) return <p>Algorithm not found</p>;
 
