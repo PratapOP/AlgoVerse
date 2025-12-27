@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import ArrayBars from "../components/visualizers/sorting/ArrayBars";
 import ControlPanel from "../components/controls/ControlPanel";
+import LegendPanel from "../components/common/LegendPanel";
 
 // Sorting algorithms
 import { getBubbleSortSteps } from "../algorithms/sorting/bubbleSort";
@@ -117,29 +118,36 @@ function Visualizer() {
         setActive(step.indices || []);
         setRange(step.range || null);
 
-        /* ----- EDUCATIONAL STEP EXPLANATION ----- */
-        if (step.type === "compare" && step.indices?.length === 2) {
-          const [i, j] = step.indices;
-          setStepText(
-            `Comparing index ${i} (${array[i]}) with index ${j} (${array[j]})`
-          );
-        } else if (step.type === "swap" && step.indices?.length === 2) {
-          const [i, j] = step.indices;
-          setStepText(
-            `Swapping ${array[i]} and ${array[j]} because they are out of order`
-          );
-        } else if (step.type === "found") {
-          setStepText(`Target ${target} found`);
-        } else if (step.type === "not-found") {
-          setStepText(`Target ${target} not found`);
-        } else if (step.type === "done") {
-          setStepText("Algorithm completed");
-
-          if (!isSearching && step.array) {
-            setSorted(
-              Array.from({ length: step.array.length }, (_, i) => i)
-            );
-          }
+        // Educational narration
+        switch (step.type) {
+          case "compare":
+            setStepText("Comparing elements");
+            break;
+          case "swap":
+            setStepText("Swapping elements");
+            break;
+          case "split":
+            setStepText("Dividing array into subarrays");
+            break;
+          case "merge":
+            setStepText("Merging sorted subarrays");
+            break;
+          case "found":
+            setStepText(`Target ${target} found`);
+            break;
+          case "not-found":
+            setStepText(`Target ${target} not found`);
+            break;
+          case "done":
+            setStepText("Algorithm completed");
+            if (!isSearching && step.array) {
+              setSorted(
+                Array.from({ length: step.array.length }, (_, i) => i)
+              );
+            }
+            break;
+          default:
+            setStepText("");
         }
 
         return prev + 1;
@@ -215,6 +223,8 @@ function Visualizer() {
       >
         View Theory
       </button>
+
+      <LegendPanel />
 
       <ArrayBars
         array={array}
