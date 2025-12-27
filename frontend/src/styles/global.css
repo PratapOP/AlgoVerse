@@ -4,13 +4,6 @@
   box-sizing: border-box;
 }
 
-body {
-  font-family: "Inter", system-ui, sans-serif;
-  background: linear-gradient(180deg, var(--bg-primary), var(--bg-secondary));
-  color: var(--text-primary);
-  min-height: 100vh;
-}
-
 h1, h2, h3 {
   font-weight: 600;
 }
@@ -23,15 +16,24 @@ pre {
   color: #e5e7eb;
 }
 
-button, select, input {
-  background: #020617;
-  color: var(--text-primary);
-  border: 1px solid #1f2937;
-  padding: 0.5rem 0.75rem;
-  border-radius: 6px;
-}
-
 button:hover {
   background: #1e293b;
   cursor: pointer;
 }
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont;
+}
+
+select,
+button,
+input {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid #334155;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+}
+

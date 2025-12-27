@@ -1,24 +1,21 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
+
 import Home from "./pages/Home";
 import Visualizer from "./pages/Visualizer";
 import AlgorithmDetail from "./pages/AlgorithmDetail";
-
-function Home() {
-  return (
-    <div style={{ padding: "40px", color: "white" }}>
-      <h1>🏠 Home Page Loaded</h1>
-      <p>React Router is working correctly.</p>
-    </div>
-  );
-}
+import Layout from "./components/common/Layout";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-      </Routes>
-    </BrowserRouter>
+    <HashRouter>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/visualizer" element={<Visualizer />} />
+          <Route path="/algorithm/:algoKey" element={<AlgorithmDetail />} />
+        </Routes>
+      </Layout>
+    </HashRouter>
   );
 }
 

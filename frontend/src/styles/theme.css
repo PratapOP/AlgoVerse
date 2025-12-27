@@ -1,19 +1,18 @@
 :root {
-  --bg-primary: #0f172a;        /* Dark navy */
-  --bg-secondary: #020617;      /* Almost black */
-  --panel-bg: #111827;
+  /* Backgrounds */
+  --bg-primary: #020617;
+  --bg-secondary: #0f172a;
 
-  --text-primary: #e5e7eb;
+  /* Text */
+  --text-primary: #ffffff;
   --text-secondary: #9ca3af;
 
-  --accent-blue: #38bdf8;
-  --accent-green: #22c55e;
-  --accent-yellow: #facc15;
-  --accent-red: #ef4444;
-  --accent-purple: #a855f7;
+  /* Bar colors */
+  --bar-default: #2563eb;   /* Blue */
+  --bar-active: #facc15;    /* Yellow */
+  --bar-sorted: #22c55e;    /* Green */
 
-  --bar-default: #38bdf8;
-  --bar-active: #facc15;
-  --bar-sorted: #22c55e;
-  --bar-found: #ef4444;
+  /* Accents */
+  --accent-purple: #a78bfa;
+  --accent-yellow: #fde047;
 }

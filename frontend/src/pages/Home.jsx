@@ -12,7 +12,7 @@ function Home() {
   return (
     <div
       style={{
-        minHeight: "100vh",
+        minHeight: "calc(100vh - 64px)",
         background:
           "radial-gradient(circle at top, #1f2937 0%, #020617 60%)",
         display: "flex",
