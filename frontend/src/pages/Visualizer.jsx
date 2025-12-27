@@ -1,48 +1,43 @@
 /* =========================================================
-   📦 IMPORTS — React & Router
+   AlgoVerse — Master Visualizer
+   Covers:
+   - Sorting Algorithms
+   - Array Searching
+   - BFS / DFS
+   - Dijkstra
+   - A* Search
    ========================================================= */
+
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-/* =========================================================
-   📦 IMPORTS — UI Components
-   ========================================================= */
+/* ================= UI COMPONENTS ================= */
 import ArrayBars from "../components/visualizers/sorting/ArrayBars";
 import ControlPanel from "../components/controls/ControlPanel";
 import LegendPanel from "../components/common/LegendPanel";
 import Grid from "../components/visualizers/searching/Grid";
 
-/* =========================================================
-   📦 IMPORTS — SORTING ALGORITHMS
-   ========================================================= */
+/* ================= SORTING ================= */
 import { getBubbleSortSteps } from "../algorithms/sorting/bubbleSort";
 import { getSelectionSortSteps } from "../algorithms/sorting/selectionSort";
 import { getInsertionSortSteps } from "../algorithms/sorting/insertionSort";
 import { getMergeSortSteps } from "../algorithms/sorting/mergeSort";
 import { getQuickSortSteps } from "../algorithms/sorting/quickSort";
 import { getHeapSortSteps } from "../algorithms/sorting/heapSort";
-import { getShellSortSteps } from "../algorithms/sorting/shellSort";
-import { getCountingSortSteps } from "../algorithms/sorting/countingSort";
-import { getRadixSortSteps } from "../algorithms/sorting/radixSort";
-import { getBucketSortSteps } from "../algorithms/sorting/bucketSort";
 
-/* =========================================================
-   📦 IMPORTS — ARRAY SEARCHING
-   ========================================================= */
+/* ================= ARRAY SEARCH ================= */
 import { getLinearSearchSteps } from "../algorithms/searching/linearSearch";
 import { getBinarySearchSteps } from "../algorithms/searching/binarySearch";
 import { getJumpSearchSteps } from "../algorithms/searching/jumpSearch";
 import { getExponentialSearchSteps } from "../algorithms/searching/exponentialSearch";
 
-/* =========================================================
-   📦 IMPORTS — GRID / GRAPH SEARCHING
-   ========================================================= */
+/* ================= GRAPH SEARCH ================= */
 import { getBFSSteps } from "../algorithms/searching/bfs";
 import { getDFSSteps } from "../algorithms/searching/dfs";
+import { getDijkstraSteps } from "../algorithms/searching/dijkstra";
+import { getAStarSteps } from "../algorithms/searching/astar";
 
-/* =========================================================
-   🧱 GRID CONFIGURATION
-   ========================================================= */
+/* ================= GRID CONFIG ================= */
 const ROWS = 15;
 const COLS = 30;
 
@@ -59,6 +54,7 @@ const createGrid = () => {
         isWall: false,
         isVisited: false,
         isPath: false,
+        weight: Math.floor(Math.random() * 9) + 1,
       });
     }
     grid.push(row);
@@ -66,19 +62,18 @@ const createGrid = () => {
   return grid;
 };
 
-/* =========================================================
-   🎛️ MAIN VISUALIZER
-   ========================================================= */
 function Visualizer() {
-  /* ------------------ Utilities ------------------ */
-  const generateArray = (size) =>
-    Array.from({ length: size }, () => Math.floor(Math.random() * 100) + 10);
-
   const navigate = useNavigate();
   const timerRef = useRef(null);
 
-  /* ------------------ State ------------------ */
+  /* ================= COMMON ================= */
+  const generateArray = (size) =>
+    Array.from({ length: size }, () => Math.floor(Math.random() * 100) + 10);
+
+  /* ================= MODE ================= */
   const [algorithm, setAlgorithm] = useState("bubble");
+
+  /* ================= ARRAY STATE ================= */
   const [size, setSize] = useState(20);
   const [array, setArray] = useState(() => generateArray(20));
   const [steps, setSteps] = useState([]);
@@ -90,19 +85,15 @@ function Visualizer() {
   const [target, setTarget] = useState(50);
   const [stepText, setStepText] = useState("");
 
-  /* -------- GRID STATE (BFS / DFS) -------- */
+  /* ================= GRID STATE ================= */
   const [grid, setGrid] = useState(createGrid);
-  const [pathSteps, setPathSteps] = useState([]);
-  const [pathIndex, setPathIndex] = useState(0);
+  const [gridSteps, setGridSteps] = useState([]);
+  const [gridIndex, setGridIndex] = useState(0);
 
-  const isArraySearch = ["linear", "binary", "jump", "exponential"].includes(
-    algorithm
-  );
-  const isGridSearch = ["bfs", "dfs"].includes(algorithm);
+  const isArraySearch = ["linear", "binary", "jump", "exponential"].includes(algorithm);
+  const isGridAlgo = ["bfs", "dfs", "dijkstra", "astar"].includes(algorithm);
 
-  /* =========================================================
-     🔁 RESET ON ALGORITHM CHANGE
-     ========================================================= */
+  /* ================= RESET ON CHANGE ================= */
   useEffect(() => {
     pause();
     setArray(generateArray(size));
@@ -113,136 +104,113 @@ function Visualizer() {
     setRange(null);
     setStepText("");
     setGrid(createGrid());
-    setPathSteps([]);
-    setPathIndex(0);
+    setGridSteps([]);
+    setGridIndex(0);
   }, [algorithm, size]);
 
-  /* =========================================================
-     🧠 ARRAY STEP GENERATOR
-     ========================================================= */
-  const getSteps = (arr, algo) => {
-    switch (algo) {
-      case "selection": return getSelectionSortSteps(arr);
-      case "insertion": return getInsertionSortSteps(arr);
-      case "merge": return getMergeSortSteps(arr);
-      case "quick": return getQuickSortSteps(arr);
-      case "heap": return getHeapSortSteps(arr);
-      case "shell": return getShellSortSteps(arr);
-      case "counting": return getCountingSortSteps(arr);
-      case "radix": return getRadixSortSteps(arr);
-      case "bucket": return getBucketSortSteps(arr);
-      case "linear": return getLinearSearchSteps(arr, target);
-      case "binary": return getBinarySearchSteps(arr, target);
-      case "jump": return getJumpSearchSteps(arr, target);
-      case "exponential": return getExponentialSearchSteps(arr, target);
-      default: return getBubbleSortSteps(arr);
+  /* ================= STEP GENERATOR ================= */
+  const getArraySteps = () => {
+    switch (algorithm) {
+      case "selection": return getSelectionSortSteps(array);
+      case "insertion": return getInsertionSortSteps(array);
+      case "merge": return getMergeSortSteps(array);
+      case "quick": return getQuickSortSteps(array);
+      case "heap": return getHeapSortSteps(array);
+      case "linear": return getLinearSearchSteps(array, target);
+      case "binary": return getBinarySearchSteps(array, target);
+      case "jump": return getJumpSearchSteps(array, target);
+      case "exponential": return getExponentialSearchSteps(array, target);
+      default: return getBubbleSortSteps(array);
     }
   };
 
-  /* =========================================================
-     ▶️ ARRAY PLAY
-     ========================================================= */
-  const play = () => {
+  /* ================= PLAY ARRAY ================= */
+  const playArray = () => {
     if (timerRef.current) return;
+    const localSteps = getArraySteps();
+    setSteps(localSteps);
 
-    if (isGridSearch) return;
-
-    setSteps(getSteps(array, algorithm));
     timerRef.current = setInterval(() => {
       setStepIndex((i) => {
-        if (i >= steps.length) return pause(), i;
-        const step = steps[i];
-        if (step.array) setArray(step.array);
-        setActive(step.indices || []);
-        setRange(step.range || null);
-        setStepText(step.type || "");
-        if (step.type === "done") setSorted(step.array.map((_, i) => i));
+        if (i >= localSteps.length) {
+          pause();
+          return i;
+        }
+        const s = localSteps[i];
+        if (s.array) setArray(s.array);
+        setActive(s.indices || []);
+        setRange(s.range || null);
+        setStepText(s.type || "");
+        if (s.type === "done" && s.array) {
+          setSorted(s.array.map((_, idx) => idx));
+        }
         return i + 1;
       });
     }, speed);
   };
 
-  /* ---------------------------------------------------------
-   🔁 RESET (ARRAY + GRID SAFE)
-   --------------------------------------------------------- */
-  const reset = () => {
-    pause();
+  /* ================= PLAY GRID ================= */
+  const playGrid = () => {
+    if (timerRef.current) return;
 
-    // Reset array-based visualizations
-    setArray(generateArray(size));
-    setSteps([]);
-    setStepIndex(0);
-    setActive([]);
-    setSorted([]);
-    setRange(null);
-
-    // Reset grid-based visualizations
-    setGrid(createGrid());
-    setPathSteps([]);
-    setPathIndex(0);
-
-    setStepText("");
-  };
-
-  /* =========================================================
-     ▶️ BFS / DFS START
-     ========================================================= */
-  const startPathfinding = () => {
-    pause();
+    let steps;
     const start = { row: 7, col: 5 };
     const end = { row: 7, col: 24 };
 
-    const steps =
-      algorithm === "bfs"
-        ? getBFSSteps(grid, start, end)
-        : getDFSSteps(grid, start, end);
+    if (algorithm === "bfs") steps = getBFSSteps(grid, start, end);
+    else if (algorithm === "dfs") steps = getDFSSteps(grid, start, end);
+    else if (algorithm === "dijkstra") steps = getDijkstraSteps(grid, start, end);
+    else steps = getAStarSteps(grid, start, end);
 
-    setPathSteps(steps);
-    setPathIndex(0);
-  };
-
-  /* =========================================================
-     ▶️ BFS / DFS PLAYER
-     ========================================================= */
-  useEffect(() => {
-    if (!pathSteps.length) return;
+    setGridSteps(steps);
 
     timerRef.current = setInterval(() => {
-      setPathIndex((i) => {
-        if (i >= pathSteps.length) return pause(), i;
-
-        const step = pathSteps[i];
-        setGrid((prev) =>
-          prev.map((row) =>
-            row.map((cell) => {
-              if (
-                step.node &&
-                cell.row === step.node.row &&
-                cell.col === step.node.col
-              ) {
-                if (step.type === "visit") return { ...cell, isVisited: true };
-                if (step.type === "path") return { ...cell, isPath: true };
-              }
-              return cell;
-            })
+      setGridIndex((i) => {
+        if (i >= steps.length) {
+          pause();
+          return i;
+        }
+        const step = steps[i];
+        setGrid((g) =>
+          g.map((row) =>
+            row.map((cell) =>
+              cell.row === step.node.row && cell.col === step.node.col
+                ? step.type === "path"
+                  ? { ...cell, isPath: true }
+                  : { ...cell, isVisited: true }
+                : cell
+            )
           )
         );
-
-        setStepText(step.type);
         return i + 1;
       });
     }, speed);
+  };
 
-    return pause;
-  }, [pathSteps]);
+  /* ================= CONTROLS ================= */
+  const play = () => {
+    isGridAlgo ? playGrid() : playArray();
+  };
 
-  /* ------------------ Helpers ------------------ */
   const pause = () => {
     clearInterval(timerRef.current);
     timerRef.current = null;
   };
 
-  const toggleWall = (r, c) => {
+  const reset = () => {
+    pause();
+    setArray(generateArray(size));
+    setGrid(createGrid());
+    setSteps([]);
+    setGridSteps([]);
+    setStepIndex(0);
+    setGridIndex(0);
+    setActive([]);
+    setSorted([]);
+    setStepText("");
+  };
+
+  const toggleWall = (r, c) =>
     setGrid((g) =>
       g.map((row) =>
         row.map((cell) =>
@@ -252,59 +220,44 @@ function Visualizer() {
         )
       )
     );
-  };
 
-  /* =========================================================
-     🖼️ RENDER
-     ========================================================= */
+  /* ================= RENDER ================= */
   return (
     <div style={{ padding: "1rem" }}>
       <h2>{algorithm.toUpperCase()} VISUALIZATION</h2>
       <p>{stepText}</p>
 
       <select value={algorithm} onChange={(e) => setAlgorithm(e.target.value)}>
-        <option value="bubble">Bubble Sort</option>
-        <option value="selection">Selection Sort</option>
-        <option value="insertion">Insertion Sort</option>
-        <option value="merge">Merge Sort</option>
-        <option value="quick">Quick Sort</option>
-        <option value="heap">Heap Sort</option>
-        <option value="shell">Shell Sort</option>
-        <option value="counting">Counting Sort</option>
-        <option value="radix">Radix Sort</option>
-        <option value="bucket">Bucket Sort</option>
+        <optgroup label="Sorting">
+          <option value="bubble">Bubble Sort</option>
+          <option value="selection">Selection Sort</option>
+          <option value="insertion">Insertion Sort</option>
+          <option value="merge">Merge Sort</option>
+          <option value="quick">Quick Sort</option>
+          <option value="heap">Heap Sort</option>
+        </optgroup>
 
-        <option value="linear">Linear Search</option>
-        <option value="binary">Binary Search</option>
-        <option value="jump">Jump Search</option>
-        <option value="exponential">Exponential Search</option>
+        <optgroup label="Searching (Array)">
+          <option value="linear">Linear Search</option>
+          <option value="binary">Binary Search</option>
+          <option value="jump">Jump Search</option>
+          <option value="exponential">Exponential Search</option>
+        </optgroup>
 
-        <option value="bfs">Breadth First Search (BFS)</option>
-        <option value="dfs">Depth First Search (DFS)</option>
+        <optgroup label="Graph">
+          <option value="bfs">BFS</option>
+          <option value="dfs">DFS</option>
+          <option value="dijkstra">Dijkstra</option>
+          <option value="astar">A*</option>
+        </optgroup>
       </select>
-
-      {isArraySearch && (
-        <input
-          type="number"
-          value={target}
-          onChange={(e) => setTarget(Number(e.target.value))}
-          placeholder="Target"
-          style={{ marginLeft: "1rem" }}
-        />
-      )}
-
-      <button onClick={() => navigate(`/algorithm/${algorithm}`)}>
-        View Theory
-      </button>
 
       <LegendPanel />
 
-      {isGridSearch ? (
+      {isGridAlgo ? (
         <>
           <Grid grid={grid} onToggleWall={toggleWall} />
-          <button onClick={startPathfinding}>
-            Start {algorithm.toUpperCase()}
-          </button>
+          <button onClick={play}>Start</button>
         </>
       ) : (
         <>
