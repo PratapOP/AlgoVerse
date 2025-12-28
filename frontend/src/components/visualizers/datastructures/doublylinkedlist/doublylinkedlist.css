@@ -1,0 +1,81 @@
+/* doublylinkedlist.css */
+
+.dll-container {
+  padding: 1rem;
+  background: #020617;
+  color: white;
+  border-radius: 10px;
+}
+
+.dll-controls {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.dll-controls input {
+  padding: 0.4rem;
+  width: 90px;
+}
+
+.dll-controls button {
+  padding: 0.4rem 0.6rem;
+  background: #7c3aed;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.dll-message {
+  margin-bottom: 0.5rem;
+  color: #a5b4fc;
+}
+
+.dll-visual {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.dll-node-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.dll-node {
+  width: 44px;
+  height: 44px;
+  background: #1e293b;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s;
+}
+
+.dll-node.head {
+  background: #22c55e;
+}
+
+.dll-node.tail {
+  background: #ef4444;
+}
+
+.dll-node.active {
+  background: #facc15;
+  transform: scale(1.15);
+}
+
+.dll-arrow {
+  font-size: 1.2rem;
+  margin: 0 4px;
+  color: #94a3b8;
+}
+
+.dll-null {
+  margin-left: 6px;
+  color: #f87171;
+}

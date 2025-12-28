@@ -1,0 +1,80 @@
+/* queue.css */
+
+.queue-container {
+  padding: 1rem;
+  background: #020617;
+  color: white;
+  border-radius: 10px;
+  width: fit-content;
+}
+
+.queue-subtitle {
+  color: #38bdf8;
+}
+
+.queue-message {
+  margin-bottom: 0.5rem;
+  color: #a5b4fc;
+}
+
+.queue-controls {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.queue-controls input {
+  padding: 0.4rem;
+  width: 90px;
+}
+
+.queue-controls button {
+  padding: 0.4rem 0.6rem;
+  background: #16a34a;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.mode-toggle {
+  background: #9333ea !important;
+}
+
+.queue-visual {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 1rem;
+}
+
+.queue-node {
+  width: 50px;
+  height: 40px;
+  background: #1e293b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s;
+}
+
+.queue-node.front {
+  background: #22c55e;
+}
+
+.queue-node.rear {
+  background: #ef4444;
+}
+
+.queue-node.active {
+  background: #facc15;
+  transform: scale(1.1);
+}
+
+.queue-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+  color: #94a3b8;
+  font-size: 0.85rem;
+}

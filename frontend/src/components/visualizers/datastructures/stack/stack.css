@@ -1,0 +1,78 @@
+/* stack.css */
+
+.stack-container {
+  padding: 1rem;
+  background: #020617;
+  color: white;
+  border-radius: 10px;
+  width: fit-content;
+}
+
+.stack-subtitle {
+  color: #38bdf8;
+}
+
+.stack-message {
+  margin-bottom: 0.5rem;
+  color: #a5b4fc;
+}
+
+.stack-controls {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.stack-controls input {
+  padding: 0.4rem;
+  width: 90px;
+}
+
+.stack-controls button {
+  padding: 0.4rem 0.6rem;
+  background: #2563eb;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.mode-toggle {
+  background: #9333ea !important;
+}
+
+.stack-visual {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 1rem;
+  padding: 0.5rem;
+  border-left: 3px solid #475569;
+}
+
+.stack-node {
+  width: 70px;
+  height: 40px;
+  background: #1e293b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s;
+}
+
+.stack-node.top {
+  background: #22c55e;
+}
+
+.stack-node.active {
+  background: #facc15;
+  transform: scale(1.1);
+}
+
+.stack-base {
+  margin-top: 4px;
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
