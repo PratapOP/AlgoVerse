@@ -1,0 +1,20 @@
+.hash-container {
+  padding: 1.5rem;
+}
+
+.hash-table {
+  display: flex;
+  gap: 1rem;
+}
+
+.bucket {
+  background: #333;
+  padding: 0.7rem;
+  min-width: 80px;
+}
+
+.bucket span {
+  display: block;
+  margin-top: 0.3rem;
+  background: #555;
+}

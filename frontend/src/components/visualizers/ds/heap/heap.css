@@ -1,0 +1,38 @@
+.heap-container {
+  padding: 1.5rem;
+}
+
+.heap-array {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.heap-array div {
+  padding: 0.5rem;
+  background: #333;
+}
+
+.heap-array .active {
+  background: #ff9800;
+}
+
+.heap-node {
+  width: 42px;
+  height: 42px;
+  background: #2b2b2b;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.heap-node.root {
+  background: #1976d2;
+}
+
+.heap-node.active {
+  background: #ff9800;
+  transform: scale(1.15);
+}

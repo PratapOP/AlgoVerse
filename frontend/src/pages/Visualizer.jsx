@@ -93,7 +93,9 @@ function Visualizer() {
   const [gridIndex, setGridIndex] = useState(0);
 
   /* ================= MODE FLAGS ================= */
-  const isArraySearch = ["linear", "binary", "jump", "exponential"].includes(algorithm);
+  const isArraySearch = ["linear", "binary", "jump", "exponential"].includes(
+    algorithm
+  );
   const isGridAlgo = ["bfs", "dfs", "dijkstra", "astar"].includes(algorithm);
   const isTreeAlgo = algorithm === "tree";
 
@@ -115,22 +117,33 @@ function Visualizer() {
   /* ================= STEP GENERATOR ================= */
   const getArraySteps = () => {
     switch (algorithm) {
-      case "selection": return getSelectionSortSteps(array);
-      case "insertion": return getInsertionSortSteps(array);
-      case "merge": return getMergeSortSteps(array);
-      case "quick": return getQuickSortSteps(array);
-      case "heap": return getHeapSortSteps(array);
-      case "linear": return getLinearSearchSteps(array, target);
-      case "binary": return getBinarySearchSteps(array, target);
-      case "jump": return getJumpSearchSteps(array, target);
-      case "exponential": return getExponentialSearchSteps(array, target);
-      default: return getBubbleSortSteps(array);
+      case "selection":
+        return getSelectionSortSteps(array);
+      case "insertion":
+        return getInsertionSortSteps(array);
+      case "merge":
+        return getMergeSortSteps(array);
+      case "quick":
+        return getQuickSortSteps(array);
+      case "heap":
+        return getHeapSortSteps(array);
+      case "linear":
+        return getLinearSearchSteps(array, target);
+      case "binary":
+        return getBinarySearchSteps(array, target);
+      case "jump":
+        return getJumpSearchSteps(array, target);
+      case "exponential":
+        return getExponentialSearchSteps(array, target);
+      default:
+        return getBubbleSortSteps(array);
     }
   };
 
   /* ================= PLAY ARRAY ================= */
   const playArray = () => {
     if (timerRef.current) return;
+
     const localSteps = getArraySteps();
     setSteps(localSteps);
 
@@ -140,11 +153,13 @@ function Visualizer() {
           pause();
           return i;
         }
+
         const s = localSteps[i];
         if (s.array) setArray(s.array);
         setActive(s.indices || []);
         setRange(s.range || null);
         setStepText(s.type || "");
+
         if (s.type === "done" && s.array) {
           setSorted(s.array.map((_, idx) => idx));
         }
@@ -163,7 +178,8 @@ function Visualizer() {
 
     if (algorithm === "bfs") steps = getBFSSteps(grid, start, end);
     else if (algorithm === "dfs") steps = getDFSSteps(grid, start, end);
-    else if (algorithm === "dijkstra") steps = getDijkstraSteps(grid, start, end);
+    else if (algorithm === "dijkstra")
+      steps = getDijkstraSteps(grid, start, end);
     else steps = getAStarSteps(grid, start, end);
 
     setGridSteps(steps);
@@ -174,6 +190,7 @@ function Visualizer() {
           pause();
           return i;
         }
+
         const step = steps[i];
         setGrid((g) =>
           g.map((row) =>
@@ -193,7 +210,7 @@ function Visualizer() {
 
   /* ================= CONTROLS ================= */
   const play = () => {
-    if (isTreeAlgo) return; // TreeVisualizer manages its own animation
+    if (isTreeAlgo) return; // TreeVisualizer handles itself
     isGridAlgo ? playGrid() : playArray();
   };
 
