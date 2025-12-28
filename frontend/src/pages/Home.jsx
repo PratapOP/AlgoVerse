@@ -78,8 +78,8 @@ function Home() {
               desc: "See how algorithms narrow down answers",
             },
             {
-              title: "Theory",
-              desc: "Learn complexity, history, and real use-cases",
+              title: "Data Structures",
+              desc: "Explore stacks, queues, trees, and more",
             },
           ].map((item, idx) => (
             <div
