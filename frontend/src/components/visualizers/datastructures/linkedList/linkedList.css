@@ -1,0 +1,76 @@
+/* linkedlist.css */
+
+.ll-container {
+  padding: 1rem;
+  background: #0f172a;
+  color: white;
+  border-radius: 10px;
+}
+
+.ll-controls {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.ll-controls input {
+  padding: 0.4rem;
+  width: 90px;
+}
+
+.ll-controls button {
+  padding: 0.4rem 0.6rem;
+  background: #2563eb;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.ll-message {
+  margin-bottom: 0.5rem;
+  color: #38bdf8;
+}
+
+.ll-visual {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 1rem;
+}
+
+.ll-node-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.ll-node {
+  width: 42px;
+  height: 42px;
+  background: #1e293b;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s;
+}
+
+.ll-node.head {
+  background: #16a34a;
+}
+
+.ll-node.active {
+  background: #f59e0b;
+  transform: scale(1.15);
+}
+
+.ll-arrow {
+  margin: 0 4px;
+  color: #94a3b8;
+}
+
+.ll-null {
+  margin-left: 6px;
+  color: #ef4444;
+}
