@@ -3,9 +3,8 @@
    Covers:
    - Sorting Algorithms
    - Array Searching
-   - BFS / DFS
-   - Dijkstra
-   - A* Search
+   - Graph Algorithms (BFS, DFS, Dijkstra, A*)
+   - Binary Tree Traversals
    ========================================================= */
 
 import { useEffect, useRef, useState } from "react";
@@ -16,6 +15,9 @@ import ArrayBars from "../components/visualizers/sorting/ArrayBars";
 import ControlPanel from "../components/controls/ControlPanel";
 import LegendPanel from "../components/common/LegendPanel";
 import Grid from "../components/visualizers/searching/Grid";
+
+/* ================= TREE ================= */
+import TreeVisualizer from "../components/visualizers/tree/TreeVisualizer";
 
 /* ================= SORTING ================= */
 import { getBubbleSortSteps } from "../algorithms/sorting/bubbleSort";
@@ -90,8 +92,10 @@ function Visualizer() {
   const [gridSteps, setGridSteps] = useState([]);
   const [gridIndex, setGridIndex] = useState(0);
 
+  /* ================= MODE FLAGS ================= */
   const isArraySearch = ["linear", "binary", "jump", "exponential"].includes(algorithm);
   const isGridAlgo = ["bfs", "dfs", "dijkstra", "astar"].includes(algorithm);
+  const isTreeAlgo = algorithm === "tree";
 
   /* ================= RESET ON CHANGE ================= */
   useEffect(() => {
@@ -189,6 +193,7 @@ function Visualizer() {
 
   /* ================= CONTROLS ================= */
   const play = () => {
+    if (isTreeAlgo) return; // TreeVisualizer manages its own animation
     isGridAlgo ? playGrid() : playArray();
   };
 
@@ -250,16 +255,27 @@ function Visualizer() {
           <option value="dijkstra">Dijkstra</option>
           <option value="astar">A*</option>
         </optgroup>
+
+        <optgroup label="Trees">
+          <option value="tree">Binary Tree Traversals</option>
+        </optgroup>
       </select>
 
       <LegendPanel />
 
-      {isGridAlgo ? (
+      {/* ================= TREE MODE ================= */}
+      {isTreeAlgo && <TreeVisualizer />}
+
+      {/* ================= GRAPH MODE ================= */}
+      {isGridAlgo && !isTreeAlgo && (
         <>
           <Grid grid={grid} onToggleWall={toggleWall} />
           <button onClick={play}>Start</button>
         </>
-      ) : (
+      )}
+
+      {/* ================= ARRAY MODE ================= */}
+      {!isGridAlgo && !isTreeAlgo && (
         <>
           <ArrayBars
             array={array}

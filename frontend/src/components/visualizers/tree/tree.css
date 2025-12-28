@@ -1,0 +1,59 @@
+.tree-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.tree-branch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tree-children {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+.tree-node {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #2c2c2c;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.tree-node.active {
+  background: #00e676;
+  color: #000;
+  transform: scale(1.2);
+}
+
+.callstack-container {
+  width: 220px;
+  background: #111;
+  border-radius: 8px;
+  padding: 1rem;
+  color: #fff;
+}
+
+.callstack {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1rem;
+}
+
+.callstack-frame {
+  background: #1e88e5;
+  padding: 0.4rem;
+  margin-bottom: 0.4rem;
+  border-radius: 4px;
+  text-align: center;
+  font-weight: 600;
+}

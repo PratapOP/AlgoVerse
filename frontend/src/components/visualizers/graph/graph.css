@@ -1,0 +1,24 @@
+.graph-canvas {
+  width: 500px;
+  height: 350px;
+  background: #111;
+}
+
+.node {
+  fill: #444;
+  stroke: white;
+}
+
+.active-node {
+  fill: #4caf50;
+}
+
+.edge {
+  stroke: #666;
+  stroke-width: 2;
+}
+
+.active-edge {
+  stroke: #ff9800;
+  stroke-width: 4;
+}
