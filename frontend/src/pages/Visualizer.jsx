@@ -1,12 +1,3 @@
-/* =========================================================
-   AlgoVerse — Master Visualizer
-   Covers:
-   - Sorting Algorithms
-   - Array Searching
-   - Graph Algorithms (BFS, DFS, Dijkstra, A*)
-   - Binary Tree Traversals
-   ========================================================= */
-
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -16,9 +7,6 @@ import ControlPanel from "../components/controls/ControlPanel";
 import LegendPanel from "../components/common/LegendPanel";
 import Grid from "../components/visualizers/searching/Grid";
 
-/* ================= TREE ================= */
-import TreeVisualizer from "../components/visualizers/tree/TreeVisualizer";
-
 /* ================= SORTING ================= */
 import { getBubbleSortSteps } from "../algorithms/sorting/bubbleSort";
 import { getSelectionSortSteps } from "../algorithms/sorting/selectionSort";
@@ -27,57 +15,52 @@ import { getMergeSortSteps } from "../algorithms/sorting/mergeSort";
 import { getQuickSortSteps } from "../algorithms/sorting/quickSort";
 import { getHeapSortSteps } from "../algorithms/sorting/heapSort";
 
-/* ================= ARRAY SEARCH ================= */
+/* ================= SEARCHING ================= */
 import { getLinearSearchSteps } from "../algorithms/searching/linearSearch";
 import { getBinarySearchSteps } from "../algorithms/searching/binarySearch";
 import { getJumpSearchSteps } from "../algorithms/searching/jumpSearch";
 import { getExponentialSearchSteps } from "../algorithms/searching/exponentialSearch";
 
-/* ================= GRAPH SEARCH ================= */
+/* ================= GRAPH ================= */
 import { getBFSSteps } from "../algorithms/searching/bfs";
 import { getDFSSteps } from "../algorithms/searching/dfs";
 import { getDijkstraSteps } from "../algorithms/searching/dijkstra";
 import { getAStarSteps } from "../algorithms/searching/astar";
 
-/* ================= GRID CONFIG ================= */
+/* ================= GRID ================= */
 const ROWS = 15;
 const COLS = 30;
 
-const createGrid = () => {
-  const grid = [];
-  for (let r = 0; r < ROWS; r++) {
-    const row = [];
-    for (let c = 0; c < COLS; c++) {
-      row.push({
-        row: r,
-        col: c,
-        isStart: r === 7 && c === 5,
-        isEnd: r === 7 && c === 24,
-        isWall: false,
-        isVisited: false,
-        isPath: false,
-        weight: Math.floor(Math.random() * 9) + 1,
-      });
-    }
-    grid.push(row);
-  }
-  return grid;
-};
+const createGrid = () =>
+  Array.from({ length: ROWS }, (_, r) =>
+    Array.from({ length: COLS }, (_, c) => ({
+      row: r,
+      col: c,
+      isStart: r === 7 && c === 5,
+      isEnd: r === 7 && c === 24,
+      isWall: false,
+      isVisited: false,
+      isPath: false,
+      weight: Math.floor(Math.random() * 9) + 1,
+    }))
+  );
 
+/* =================================================
+   VISUALIZER
+================================================= */
 function Visualizer() {
   const navigate = useNavigate();
   const timerRef = useRef(null);
-
-  /* ================= COMMON ================= */
-  const generateArray = (size) =>
-    Array.from({ length: size }, () => Math.floor(Math.random() * 100) + 10);
 
   /* ================= MODE ================= */
   const [algorithm, setAlgorithm] = useState("bubble");
 
   /* ================= ARRAY STATE ================= */
+  const generateArray = (n) =>
+    Array.from({ length: n }, () => Math.floor(Math.random() * 100) + 10);
+
+  const [array, setArray] = useState(generateArray(20));
   const [size, setSize] = useState(20);
-  const [array, setArray] = useState(() => generateArray(20));
   const [steps, setSteps] = useState([]);
   const [stepIndex, setStepIndex] = useState(0);
   const [active, setActive] = useState([]);
@@ -92,19 +75,38 @@ function Visualizer() {
   const [gridSteps, setGridSteps] = useState([]);
   const [gridIndex, setGridIndex] = useState(0);
 
-  /* ================= MODE FLAGS ================= */
-  const isArraySearch = ["linear", "binary", "jump", "exponential"].includes(
-    algorithm
-  );
-  const isGridAlgo = ["bfs", "dfs", "dijkstra", "astar"].includes(algorithm);
-  const isTreeAlgo = algorithm === "tree";
+  /* ================= DATA STRUCTURES ================= */
+  const [linkedList, setLinkedList] = useState([]);
+  const [stack, setStack] = useState([]);
+  const [queue, setQueue] = useState([]);
+  const [dsValue, setDsValue] = useState("");
 
-  /* ================= RESET ON CHANGE ================= */
+  /* ================= FLAGS ================= */
+  const isSorting = [
+    "bubble",
+    "selection",
+    "insertion",
+    "merge",
+    "quick",
+    "heap",
+  ].includes(algorithm);
+
+  const isSearching = [
+    "linear",
+    "binary",
+    "jump",
+    "exponential",
+  ].includes(algorithm);
+
+  const isGraph = ["bfs", "dfs", "dijkstra", "astar"].includes(algorithm);
+
+  const isDS = ["linkedlist", "stack", "queue"].includes(algorithm);
+
+  /* ================= RESET ================= */
   useEffect(() => {
     pause();
     setArray(generateArray(size));
     setSteps([]);
-    setStepIndex(0);
     setActive([]);
     setSorted([]);
     setRange(null);
@@ -114,7 +116,7 @@ function Visualizer() {
     setGridIndex(0);
   }, [algorithm, size]);
 
-  /* ================= STEP GENERATOR ================= */
+  /* ================= SORT / SEARCH STEPS ================= */
   const getArraySteps = () => {
     switch (algorithm) {
       case "selection":
@@ -143,7 +145,6 @@ function Visualizer() {
   /* ================= PLAY ARRAY ================= */
   const playArray = () => {
     if (timerRef.current) return;
-
     const localSteps = getArraySteps();
     setSteps(localSteps);
 
@@ -153,29 +154,26 @@ function Visualizer() {
           pause();
           return i;
         }
-
         const s = localSteps[i];
         if (s.array) setArray(s.array);
         setActive(s.indices || []);
         setRange(s.range || null);
         setStepText(s.type || "");
-
-        if (s.type === "done" && s.array) {
+        if (s.type === "done" && s.array)
           setSorted(s.array.map((_, idx) => idx));
-        }
         return i + 1;
       });
     }, speed);
   };
 
-  /* ================= PLAY GRID ================= */
-  const playGrid = () => {
+  /* ================= PLAY GRAPH ================= */
+  const playGraph = () => {
     if (timerRef.current) return;
 
-    let steps;
     const start = { row: 7, col: 5 };
     const end = { row: 7, col: 24 };
 
+    let steps;
     if (algorithm === "bfs") steps = getBFSSteps(grid, start, end);
     else if (algorithm === "dfs") steps = getDFSSteps(grid, start, end);
     else if (algorithm === "dijkstra")
@@ -190,7 +188,6 @@ function Visualizer() {
           pause();
           return i;
         }
-
         const step = steps[i];
         setGrid((g) =>
           g.map((row) =>
@@ -208,10 +205,33 @@ function Visualizer() {
     }, speed);
   };
 
+  /* ================= DS ACTIONS ================= */
+  const addLinkedList = () => {
+    if (!dsValue) return;
+    setLinkedList([...linkedList, dsValue]);
+    setDsValue("");
+  };
+
+  const pushStack = () => {
+    if (!dsValue) return;
+    setStack([...stack, dsValue]);
+    setDsValue("");
+  };
+
+  const popStack = () => setStack(stack.slice(0, -1));
+
+  const enqueue = () => {
+    if (!dsValue) return;
+    setQueue([...queue, dsValue]);
+    setDsValue("");
+  };
+
+  const dequeue = () => setQueue(queue.slice(1));
+
   /* ================= CONTROLS ================= */
   const play = () => {
-    if (isTreeAlgo) return; // TreeVisualizer handles itself
-    isGridAlgo ? playGrid() : playArray();
+    if (isSorting || isSearching) playArray();
+    if (isGraph) playGraph();
   };
 
   const pause = () => {
@@ -223,47 +243,32 @@ function Visualizer() {
     pause();
     setArray(generateArray(size));
     setGrid(createGrid());
-    setSteps([]);
-    setGridSteps([]);
-    setStepIndex(0);
-    setGridIndex(0);
-    setActive([]);
-    setSorted([]);
+    setLinkedList([]);
+    setStack([]);
+    setQueue([]);
     setStepText("");
   };
-
-  const toggleWall = (r, c) =>
-    setGrid((g) =>
-      g.map((row) =>
-        row.map((cell) =>
-          cell.row === r && cell.col === c && !cell.isStart && !cell.isEnd
-            ? { ...cell, isWall: !cell.isWall }
-            : cell
-        )
-      )
-    );
 
   /* ================= RENDER ================= */
   return (
     <div style={{ padding: "1rem" }}>
-      <h2>{algorithm.toUpperCase()} VISUALIZATION</h2>
-      <p>{stepText}</p>
+      <h2>AlgoVerse Visualizer</h2>
 
       <select value={algorithm} onChange={(e) => setAlgorithm(e.target.value)}>
         <optgroup label="Sorting">
-          <option value="bubble">Bubble Sort</option>
-          <option value="selection">Selection Sort</option>
-          <option value="insertion">Insertion Sort</option>
-          <option value="merge">Merge Sort</option>
-          <option value="quick">Quick Sort</option>
-          <option value="heap">Heap Sort</option>
+          <option value="bubble">Bubble</option>
+          <option value="selection">Selection</option>
+          <option value="insertion">Insertion</option>
+          <option value="merge">Merge</option>
+          <option value="quick">Quick</option>
+          <option value="heap">Heap</option>
         </optgroup>
 
-        <optgroup label="Searching (Array)">
-          <option value="linear">Linear Search</option>
-          <option value="binary">Binary Search</option>
-          <option value="jump">Jump Search</option>
-          <option value="exponential">Exponential Search</option>
+        <optgroup label="Searching">
+          <option value="linear">Linear</option>
+          <option value="binary">Binary</option>
+          <option value="jump">Jump</option>
+          <option value="exponential">Exponential</option>
         </optgroup>
 
         <optgroup label="Graph">
@@ -273,26 +278,17 @@ function Visualizer() {
           <option value="astar">A*</option>
         </optgroup>
 
-        <optgroup label="Trees">
-          <option value="tree">Binary Tree Traversals</option>
+        <optgroup label="Data Structures">
+          <option value="linkedlist">Linked List</option>
+          <option value="stack">Stack</option>
+          <option value="queue">Queue</option>
         </optgroup>
       </select>
 
       <LegendPanel />
 
-      {/* ================= TREE MODE ================= */}
-      {isTreeAlgo && <TreeVisualizer />}
-
-      {/* ================= GRAPH MODE ================= */}
-      {isGridAlgo && !isTreeAlgo && (
-        <>
-          <Grid grid={grid} onToggleWall={toggleWall} />
-          <button onClick={play}>Start</button>
-        </>
-      )}
-
-      {/* ================= ARRAY MODE ================= */}
-      {!isGridAlgo && !isTreeAlgo && (
+      {/* ARRAY */}
+      {(isSorting || isSearching) && (
         <>
           <ArrayBars
             array={array}
@@ -310,6 +306,55 @@ function Visualizer() {
             setSize={setSize}
           />
         </>
+      )}
+
+      {/* GRAPH */}
+      {isGraph && (
+        <>
+          <Grid grid={grid} />
+          <button onClick={play}>Start</button>
+        </>
+      )}
+
+      {/* DATA STRUCTURES */}
+      {isDS && (
+        <div style={{ marginTop: "1rem" }}>
+          <input
+            value={dsValue}
+            onChange={(e) => setDsValue(e.target.value)}
+            placeholder="Value"
+          />
+
+          {algorithm === "linkedlist" && (
+            <>
+              <button onClick={addLinkedList}>Insert</button>
+              <div style={{ display: "flex", marginTop: "1rem" }}>
+                {linkedList.map((v, i) => (
+                  <div key={i} style={{ marginRight: "10px" }}>
+                    [{v}] →
+                  </div>
+                ))}
+                null
+              </div>
+            </>
+          )}
+
+          {algorithm === "stack" && (
+            <>
+              <button onClick={pushStack}>Push</button>
+              <button onClick={popStack}>Pop</button>
+              <div>{stack.map((v, i) => <div key={i}>{v}</div>)}</div>
+            </>
+          )}
+
+          {algorithm === "queue" && (
+            <>
+              <button onClick={enqueue}>Enqueue</button>
+              <button onClick={dequeue}>Dequeue</button>
+              <div>{queue.map((v, i) => <span key={i}>{v} </span>)}</div>
+            </>
+          )}
+        </div>
       )}
     </div>
   );
